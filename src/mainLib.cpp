@@ -1,5 +1,6 @@
 #include <pthread.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <malloc.h>
 #include <iostream>
@@ -19,28 +20,24 @@ struct Trabalho {
 };
 
 list<trabalho *> trabalhosProntos, trabalhosTerminados;
-int qtdProcVirtuais = 0;
 static pthread_t *pvs; // processadores virtuais
-pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t unlock = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t iniciados = PTHREAD_ERRORCHECK_MUTEX_INITIALIZER_NP;
+pthread_mutex_t finalizados = PTHREAD_ERRORCHECK_MUTEX_INITIALIZER_NP;
+bool fim = false;
 
-void *iniciaPV(void *dta) {
-  void* res;
-  struct Trabalho *t;
-  while () {
-
-  }
-}
+void *iniciaPV(void *dta);
 
 int start (int m) {
   int i, threads;
   pvs = (pthread_t *) malloc(m * sizeof(pthread_t));
+  qtdProcVirtuais = m;
+  fim = 0;
   for (i=0; i < m; i++) {
-    threads = pthread_create(&pvs[i], NULL, iniciaPV, NULL); //cria thread
+    threads = pthread_create(&pvs[i], NULL, iniciaPV, NULL);
     if (threads != 0) {
       return 0;
     }
-  } 
+  }
   return 1;
 }
 
