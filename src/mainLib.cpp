@@ -19,9 +19,12 @@ struct Trabalho {
    void* res; // Retorno de função
 };
 
-list<trabalho *> trabalhosProntos, trabalhosTerminados;
 int qtdProcVirtuais = 0;
+int idTrabalho = 0;
 static pthread_t *pvs; // processadores virtuais
+
+list <Trabalho *> trabalhosProntos, trabalhosTerminados;
+
 pthread_mutex_t iniciados = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t finalizados = PTHREAD_MUTEX_INITIALIZER;
 
