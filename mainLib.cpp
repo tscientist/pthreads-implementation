@@ -32,6 +32,8 @@ void *iniciaPV(void *dta);
 
 void armazenaResultados(struct Trabalho *trabalho);
 
+struct Trabalho *iniciaTrabalho();
+
 int start (int m) {
   int i, threads;
   pvs = (pthread_t *) malloc(m * sizeof(pthread_t));
@@ -74,10 +76,10 @@ int sync( int tId, void** res );
 
 void *iniciaPV(void *dta) {
   void* res;
-  //struct Trabalho *t;
+  struct Trabalho *t;
   while ((fim == false) && (trabalhosProntos.size() != NULL)) {
     pthread_mutex_lock(&iniciados);
-    //t = pegaTrabalho(trabalhosProntos);
+    t = iniciaTrabalho(trabalhosProntos);
     pthread_mutex_unlock(&iniciados);
     res = armazenaResultados(t);
   }
@@ -91,4 +93,13 @@ void armazenaResultados(struct Trabalho *trabalho) {
   trabalho->res = res;
   trabalhosTerminados.push_front(trabalho);  
   pthread_mutex_unlock(&finalizados);
+}
+
+struct Trabalho *iniciaTrabalho() {
+  if (trabalhosProntos.empty()) {
+    return NULL;
+  }
+  struct Trabalho *trabalho = trabalhosProntos.front();
+  trabalhosProntos.pop_front();
+  return trabalho;
 }
