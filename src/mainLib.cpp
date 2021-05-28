@@ -46,3 +46,15 @@ void finish();
 int spawn( struct Atrib* atrib, void *(*t) (void *), void* dta );
 
 int sync( int tId, void** res );
+
+void *iniciaPV(void *dta) {
+  void* res;
+  //struct Trabalho *t;
+  while ((fim == false) && (trabalhosProntos.size() != NULL)) {
+    pthread_mutex_lock(&iniciados);
+    //t = pegaTrabalho(trabalhosProntos);
+    pthread_mutex_unlock(&iniciados);
+    res = armazenaResultados(t);
+  }
+  return NULL;
+}
