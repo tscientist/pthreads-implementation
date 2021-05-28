@@ -46,6 +46,9 @@ int start (int m) {
 
 void finish();
 
-int spawn( struct Atrib* atrib, void *(*t) (void *), void* dta );
+int spawn( struct Atrib* atrib, void *(*t) (void *), void* dta ){
+  Trabalho *newTrab = (Trabalho *) malloc(sizeof(Trabalho));
+  
+}
 
 int sync( int tId, void** res );
