@@ -30,6 +30,8 @@ bool fim = false;
 
 void *iniciaPV(void *dta);
 
+void armazenaResultados(struct Trabalho *trabalho);
+
 int start (int m) {
   int i, threads;
   pvs = (pthread_t *) malloc(m * sizeof(pthread_t));
@@ -80,4 +82,13 @@ void *iniciaPV(void *dta) {
     res = armazenaResultados(t);
   }
   return NULL;
+}
+
+void armazenaResultados(struct Trabalho *trabalho) {  
+  void* res;  
+  res = trabalho->f(trabalho->dta);  
+  pthread_mutex_lock(&finalizados);  
+  trabalho->res = res;
+  trabalhosTerminados.push_front(trabalho);  
+  pthread_mutex_unlock(&finalizados);
 }
