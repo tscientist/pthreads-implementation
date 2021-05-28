@@ -6,6 +6,7 @@
 #include <iostream>
 #include <list>
 #include "headers.hpp"
+using namespace std;
 
 struct Atrib{
 	int p; // prioridade da tarefa
@@ -19,6 +20,8 @@ struct Trabalho {
    void* res; // Retorno de função
 };
 
+int qtdProcVirtuais = 0;
+int idTrabalho = 0;
 list<trabalho *> trabalhosProntos, trabalhosTerminados;
 static pthread_t *pvs; // processadores virtuais
 pthread_mutex_t iniciados = PTHREAD_ERRORCHECK_MUTEX_INITIALIZER_NP;
@@ -41,9 +44,29 @@ int start (int m) {
   return 1;
 }
 
-void finish();
+void finish(){
+	while (qtdProcVirtuais >= 0) {
+		qtdProcVirtuais--;
+	}
+};
 
-int spawn( struct Atrib* atrib, void *(*t) (void *), void* dta );
+int spawn( struct Atrib* atrib, void *(*t) (void *), void* dta ) {
+	pthread_mutex_lock(&iniciados);
+
+    Trabalho *trab;
+	trab = (Trabalho *)malloc(sizeof(Trabalho));
+	idTrabalho++;
+
+    trab->tid = idTrabalho;
+    trab->f = t;
+    trab->dta = dta;
+
+	prontos.push_front(trab);
+
+	pthread_mutex_unlock(&iniciados);
+
+	return idTrabalho;
+}
 
 int sync( int tId, void** res );
 

@@ -1,5 +1,10 @@
 #include <pthread.h>
 
+struct Atrib{
+    int p; //prioridade
+    int c; //custo
+};
+
 int start (int m);
 //lança o núcleo de execução, instanciando os 'M' processadores virtuais - retorno = 0(falha) ou 1(deu bom)
 void finish();
