@@ -19,10 +19,10 @@ int main(){
 
     start(nThreads);
     escalo.p = 0;
-    escalo.c = 0;
+    escalo.c = fib;
 
-    response_spawn = spawn(&escalo,fib,fib);
-    sync(response_spawn,(void **)&r)
+    response_spawn = spawn(&escalo,fibo,&fib);
+    sync(response_spawn,(void **)&r);
 
     return 0;
 }

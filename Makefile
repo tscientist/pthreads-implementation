@@ -1,6 +1,6 @@
-all: lib.o main.cpp
-	g++ -o main.o lib.o main.cpp -lpthread -g
-lib.o: mainLib.cpp header.hpp
-	g++ -o lib.o mainLib.cpp -c -lpthread -g
+all: main.cpp mainLib.cpp
+	g++ main.cpp mainLib.cpp -lpthread -o main
+input: main
+	./main
 clean:
 	rm -rf *.o

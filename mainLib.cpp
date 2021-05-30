@@ -8,11 +8,6 @@
 #include "headers.hpp"
 using namespace std;
 
-struct Atrib{
-	int p; // prioridade da tarefa
-	int c; // custo computacional
-};
-
 struct Trabalho {
    int tid; // id da thread
    void* (*f)(void*); // função a ser executada
@@ -22,7 +17,7 @@ struct Trabalho {
 
 int qtdProcVirtuais = 0;
 int idTrabalho = 0;
-list<trabalho *> trabalhosProntos, trabalhosTerminados;
+list<struct Trabalho *> trabalhosProntos, trabalhosTerminados;
 static pthread_t *pvs; // processadores virtuais
 pthread_mutex_t iniciados = PTHREAD_ERRORCHECK_MUTEX_INITIALIZER_NP;
 pthread_mutex_t finalizados = PTHREAD_ERRORCHECK_MUTEX_INITIALIZER_NP;
@@ -54,40 +49,76 @@ void finish(){
 	}
 };
 
-int spawn( struct Atrib* atrib, void *(*t) (void *), void* dta ) {
+int spawn(struct Atrib* atrib, void *(*t) (void *), void* dta ) {
 	pthread_mutex_lock(&iniciados);
 
-    Trabalho *trab;
-	trab = (Trabalho *)malloc(sizeof(Trabalho));
+  struct Trabalho *trab;
+	trab = (Trabalho *)malloc(sizeof(struct Trabalho));
 	idTrabalho++;
 
     trab->tid = idTrabalho;
     trab->f = t;
     trab->dta = dta;
 
-	prontos.push_front(trab);
+	trabalhosProntos.push_front(trab);
 
 	pthread_mutex_unlock(&iniciados);
 
 	return idTrabalho;
 }
 
-int sync( int tId, void** res );
+int sync( int tId, void** res ) {
+  Trabalho *resTrab, *trab;
+  list<Trabalho *>::iterator search;
+  //caso 2 - busca na lista de trabalhos terminados
+for (search = trabalhosTerminados.begin(); search != trabalhosTerminados.end(); ++search) {
+    if ((*search)->tid == tId) {
+      pthread_mutex_lock(&iniciados);
+      trab = *search;
+      trabalhosTerminados.erase(search);
+      *res = trab->res;
+      pthread_mutex_unlock(&iniciados);
+    }
+  }
+
+  //caso 1 - busca na lista de trabalhos prontos o 2 vem primeiro pois caso ache nele não é necessario executar nenhum outro.
+  for (search = trabalhosProntos.begin(); search != trabalhosProntos.end(); ++search) {
+    if ((*search)->tid == tId) {
+      pthread_mutex_lock(&iniciados);
+      trab = *search;
+      armazenaResultados(trab);
+      *res = trab->res;
+      trabalhosProntos.erase(search);
+      pthread_mutex_unlock(&iniciados);
+    }
+  }
+
+  //caso 3 - resolver a tarefa em execução e retornar
+  pthread_mutex_lock(&iniciados);
+  resTrab = iniciaTrabalho();
+  pthread_mutex_unlock(&iniciados);
+  if (resTrab != NULL) {
+    pthread_mutex_lock(&iniciados);
+    armazenaResultados(resTrab);
+    *res = resTrab->res;
+    pthread_mutex_unlock(&iniciados);
+  }
+}
 
 void *iniciaPV(void *dta) {
   void* res;
   struct Trabalho *t;
   while ((fim == false) && (trabalhosProntos.size() != NULL)) {
     pthread_mutex_lock(&iniciados);
-    t = iniciaTrabalho(trabalhosProntos);
+    t = iniciaTrabalho();
     pthread_mutex_unlock(&iniciados);
-    res = armazenaResultados(t);
+    armazenaResultados(t);
   }
   return NULL;
 }
 
 void armazenaResultados(struct Trabalho *trabalho) {  
-  void* res;  
+  void * res;  
   res = trabalho->f(trabalho->dta);  
   pthread_mutex_lock(&finalizados);  
   trabalho->res = res;
