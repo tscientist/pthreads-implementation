@@ -23,7 +23,8 @@ int main(){
 
     response_spawn = spawn(&escalo,fibo,&fib);
     sync(response_spawn,(void **)&r);
-
+		printf("Fibonacci (%d) = %d \n", n, *r);
+		finish();
     return 0;
 }
 
