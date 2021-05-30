@@ -11,7 +11,7 @@ Desenvolvimento de um código em um modelo onde **n** tarefas são executadas so
 
 ## Instalação
 
-Para executar o programa você precisa ter o GCC instalado 
+Para executar o programa você precisa ter o g++ instalado e estar em ambiente linux, pois o pthread é feito para o posix(linux).
 
 É preciso clonar o repositório para testar. No terminal digite: 
 
