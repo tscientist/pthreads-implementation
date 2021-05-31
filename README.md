@@ -33,9 +33,6 @@ Para compilar digite:
 make all
 ```
 
-### Apresentação disponivel em:
-
-https://drive.google.com/drive/folders/12JrTQrpO5HbVeeHHrPvu2JKYrT_Iv4Si?usp=sharing
 
 E para rodar o fibonacci: 
 
@@ -44,3 +41,6 @@ make input
 ```
 
 
+### Apresentação disponivel em:
+
+https://drive.google.com/drive/folders/12JrTQrpO5HbVeeHHrPvu2JKYrT_Iv4Si?usp=sharing
